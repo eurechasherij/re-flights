@@ -21,11 +21,13 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import { useState } from "react";
+import { AirportSearch } from "./AirportSearch";
+import type { AirportResult } from "@/networks/airportResource";
 
 interface FlightSearchState {
   tripType: string;
-  origin: string;
-  destination: string;
+  origin: AirportResult | null;
+  destination: AirportResult | null;
   departureDate: string;
   returnDate: string;
   passengers: number;
@@ -35,8 +37,8 @@ interface FlightSearchState {
 export const FlightSearch = () => {
   const [searchData, setSearchData] = useState<FlightSearchState>({
     tripType: "roundtrip",
-    origin: "",
-    destination: "",
+    origin: null,
+    destination: null,
     departureDate: "",
     returnDate: "",
     passengers: 1,
@@ -64,6 +66,14 @@ export const FlightSearch = () => {
       setSearchData((prev) => ({
         ...prev,
         [field]: event.target.value,
+      }));
+    };
+
+  const handleAirportChange =
+    (field: "origin" | "destination") => (airport: AirportResult | null) => {
+      setSearchData((prev) => ({
+        ...prev,
+        [field]: airport,
       }));
     };
 
@@ -134,7 +144,7 @@ export const FlightSearch = () => {
               size="small"
             >
               <MenuItem value="economy">Economy</MenuItem>
-              <MenuItem value="premium">Premium economy</MenuItem>
+              <MenuItem value="premium_economy">Premium Economy</MenuItem>
               <MenuItem value="business">Business</MenuItem>
               <MenuItem value="first">First</MenuItem>
             </Select>
@@ -144,52 +154,40 @@ export const FlightSearch = () => {
         {/* Location and Date Selection */}
         <div className="w-full flex flex-row gap-4 items-end">
           {/* Origin */}
-          <div className="grow">
-            <TextField
-              fullWidth
+          <div className="grow w-3/13">
+            <AirportSearch
               label="From"
               placeholder="Where from?"
+              startIcon={<FlightTakeoff className="mr-" />}
               value={searchData.origin}
-              onChange={handleInputChange("origin")}
-              slotProps={{
-                input: {
-                  startAdornment: <FlightTakeoff className="mr-" />,
-                },
-              }}
-              variant="outlined"
+              onChange={handleAirportChange("origin")}
             />
           </div>
 
           {/* Swap Button */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center w-1/13">
             <IconButton
               onClick={swapLocations}
               className="bg-blue-50 hover:bg-blue-100 border border-blue-200"
               size="large"
             >
-              <SwapHoriz className="text-blue-600" />
+              <SwapHoriz className="text-black dark:text-gray-300" />
             </IconButton>
           </div>
 
           {/* Destination */}
-          <div className="grow">
-            <TextField
-              fullWidth
+          <div className="grow w-3/13">
+            <AirportSearch
               label="To"
               placeholder="Where to?"
+              startIcon={<FlightLand className="mr-" />}
               value={searchData.destination}
-              onChange={handleInputChange("destination")}
-              slotProps={{
-                input: {
-                  startAdornment: <FlightLand className="mr-" />,
-                },
-              }}
-              variant="outlined"
+              onChange={handleAirportChange("destination")}
             />
           </div>
 
           {/* Departure Date */}
-          <div className="grow">
+          <div className="grow w-3/13">
             <TextField
               fullWidth
               label="Departure"
@@ -201,16 +199,13 @@ export const FlightSearch = () => {
                   startAdornment: <CalendarToday className="mr-" />,
                 },
               }}
-              InputLabelProps={{
-                shrink: true,
-              }}
               variant="outlined"
             />
           </div>
 
           {/* Return Date */}
           {searchData.tripType !== "oneway" && (
-            <div className="grow">
+            <div className="grow w-3/13">
               <TextField
                 fullWidth
                 label="Return"
@@ -278,14 +273,14 @@ export const FlightSearch = () => {
             />
             {searchData.origin && (
               <Chip
-                label={`From: ${searchData.origin}`}
+                label={`From: ${searchData.origin.presentation.title}`}
                 size="small"
                 variant="outlined"
               />
             )}
             {searchData.destination && (
               <Chip
-                label={`To: ${searchData.destination}`}
+                label={`To: ${searchData.destination.presentation.title}`}
                 size="small"
                 variant="outlined"
               />
