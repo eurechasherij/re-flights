@@ -88,7 +88,7 @@ export const FlightSearch = () => {
   };
 
   return (
-    <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-lg! bg-gray-250! dark:bg-slate-600! text-black! dark:text-white!">
+    <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-xl!">
       <CardContent className="p-6 flex flex-col gap-4">
         {/* Trip Type and Class Selection */}
         <div className="w-full flex flex-wrap gap-4">
@@ -151,10 +151,10 @@ export const FlightSearch = () => {
               placeholder="Where from?"
               value={searchData.origin}
               onChange={handleInputChange("origin")}
-              InputProps={{
-                startAdornment: (
-                  <FlightTakeoff className="mr-2 text-gray-500 dark:text-gray-200" />
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: <FlightTakeoff className="mr-" />,
+                },
               }}
               variant="outlined"
             />
@@ -179,8 +179,10 @@ export const FlightSearch = () => {
               placeholder="Where to?"
               value={searchData.destination}
               onChange={handleInputChange("destination")}
-              InputProps={{
-                startAdornment: <FlightLand className="mr-2 text-gray-500 dark:text-gray-200" />,
+              slotProps={{
+                input: {
+                  startAdornment: <FlightLand className="mr-" />,
+                },
               }}
               variant="outlined"
             />
@@ -194,10 +196,10 @@ export const FlightSearch = () => {
               type="date"
               value={searchData.departureDate}
               onChange={handleInputChange("departureDate")}
-              InputProps={{
-                startAdornment: (
-                  <CalendarToday className="mr-2 text-gray-500 dark:text-gray-200" />
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: <CalendarToday className="mr-" />,
+                },
               }}
               InputLabelProps={{
                 shrink: true,
@@ -215,13 +217,10 @@ export const FlightSearch = () => {
                 type="date"
                 value={searchData.returnDate}
                 onChange={handleInputChange("returnDate")}
-                InputProps={{
-                  startAdornment: (
-                    <CalendarToday className="mr-2 text-gray-500 dark:text-gray-200" />
-                  ),
-                }}
-                InputLabelProps={{
-                  shrink: true,
+                slotProps={{
+                  input: {
+                    startAdornment: <CalendarToday className="mr-" />,
+                  },
                 }}
                 variant="outlined"
               />
@@ -237,7 +236,7 @@ export const FlightSearch = () => {
             size="large"
             onClick={handleSearch}
             startIcon={<Search />}
-            className="bg-blue-600 hover:bg-blue-700 py-3 px-6 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+            className="font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 bg-gray-700 dark:bg-gray-500!"
             sx={{
               textTransform: "none",
               fontSize: "1rem",
@@ -250,10 +249,10 @@ export const FlightSearch = () => {
 
         {/* Search Summary */}
         <Box className="pt-4 border-t border-gray-200">
-          <Typography variant="body2" className="text-gray-600 dark:text-gray-200 mb-2">
+          <Typography variant="body2" className="mb-2">
             Search Summary:
           </Typography>
-          <div className="flex flex-wrap gap-2 text-gray-600 dark:text-gray-300">
+          <div className="flex flex-wrap gap-2">
             <Chip
               label={`${
                 searchData.tripType.charAt(0).toUpperCase() +
