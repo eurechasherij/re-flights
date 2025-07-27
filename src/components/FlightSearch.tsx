@@ -265,8 +265,9 @@ export const FlightSearch = () => {
             />
             <Chip
               label={
-                searchData.travelClass.charAt(0).toUpperCase() +
-                searchData.travelClass.slice(1)
+                searchData.travelClass.split("_")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")
               }
               size="small"
               variant="outlined"
