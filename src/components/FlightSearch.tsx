@@ -1,3 +1,4 @@
+import { useFlightSearch } from "@/hooks/useFlightSearch";
 import {
   CalendarToday,
   FlightLand,
@@ -18,84 +19,11 @@ import {
   Select,
   TextField,
   Typography,
-  type SelectChangeEvent,
 } from "@mui/material";
-import { useState } from "react";
 import { AirportSearch } from "./AirportSearch";
-import type { AirportResult } from "@/networks/airportResource";
-
-interface FlightSearchState {
-  tripType: string;
-  origin: AirportResult | null;
-  destination: AirportResult | null;
-  departureDate: string;
-  returnDate: string;
-  passengers: number;
-  travelClass: string;
-}
 
 export const FlightSearch = () => {
-  const [searchData, setSearchData] = useState<FlightSearchState>({
-    tripType: "roundtrip",
-    origin: null,
-    destination: null,
-    departureDate: "",
-    returnDate: "",
-    passengers: 1,
-    travelClass: "economy",
-  });
-
-  const handleTripTypeChange = (event: SelectChangeEvent) => {
-    setSearchData((prev) => ({
-      ...prev,
-      tripType: event.target.value,
-      returnDate: event.target.value === "oneway" ? "" : prev.returnDate,
-    }));
-  };
-
-  const handleClassChange = (event: SelectChangeEvent) => {
-    setSearchData((prev) => ({
-      ...prev,
-      travelClass: event.target.value,
-    }));
-  };
-
-  const handleInputChange =
-    (field: keyof FlightSearchState) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchData((prev) => ({
-        ...prev,
-        [field]: event.target.value,
-      }));
-    };
-
-  const handleAirportChange =
-    (field: "origin" | "destination") => (airport: AirportResult | null) => {
-      setSearchData((prev) => ({
-        ...prev,
-        [field]: airport,
-      }));
-    };
-
-  const handlePassengerChange = (event: SelectChangeEvent) => {
-    setSearchData((prev) => ({
-      ...prev,
-      passengers: Number(event.target.value),
-    }));
-  };
-
-  const swapLocations = () => {
-    setSearchData((prev) => ({
-      ...prev,
-      origin: prev.destination,
-      destination: prev.origin,
-    }));
-  };
-
-  const handleSearch = () => {
-    console.log("Search flights:", searchData);
-    // TODO: Implement flight search logic
-  };
+  const { searchData, handlers, isSearchValid } = useFlightSearch();
 
   return (
     <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-xl!">
@@ -108,7 +36,7 @@ export const FlightSearch = () => {
               labelId="trip-type-label"
               value={searchData.tripType}
               label="Trip Type"
-              onChange={handleTripTypeChange}
+              onChange={handlers.handleTripTypeChange}
               size="small"
             >
               <MenuItem value="roundtrip">Round trip</MenuItem>
@@ -123,7 +51,7 @@ export const FlightSearch = () => {
               labelId="passengers-label"
               value={searchData.passengers.toString()}
               label="Passengers"
-              onChange={handlePassengerChange}
+              onChange={handlers.handlePassengerChange}
               size="small"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
@@ -140,7 +68,7 @@ export const FlightSearch = () => {
               labelId="class-label"
               value={searchData.travelClass}
               label="Class"
-              onChange={handleClassChange}
+              onChange={handlers.handleClassChange}
               size="small"
             >
               <MenuItem value="economy">Economy</MenuItem>
@@ -160,14 +88,14 @@ export const FlightSearch = () => {
               placeholder="Where from?"
               startIcon={<FlightTakeoff className="mr-" />}
               value={searchData.origin}
-              onChange={handleAirportChange("origin")}
+              onChange={handlers.handleAirportChange("origin")}
             />
           </div>
 
           {/* Swap Button */}
           <div className="flex-1 flex justify-center w-1/13">
             <IconButton
-              onClick={swapLocations}
+              onClick={handlers.swapLocations}
               className="bg-blue-50 hover:bg-blue-100 border border-blue-200"
               size="large"
             >
@@ -182,7 +110,7 @@ export const FlightSearch = () => {
               placeholder="Where to?"
               startIcon={<FlightLand className="mr-" />}
               value={searchData.destination}
-              onChange={handleAirportChange("destination")}
+              onChange={handlers.handleAirportChange("destination")}
             />
           </div>
 
@@ -193,7 +121,7 @@ export const FlightSearch = () => {
               label="Departure"
               type="date"
               value={searchData.departureDate}
-              onChange={handleInputChange("departureDate")}
+              onChange={handlers.handleInputChange("departureDate")}
               slotProps={{
                 input: {
                   startAdornment: <CalendarToday className="mr-" />,
@@ -211,7 +139,7 @@ export const FlightSearch = () => {
                 label="Return"
                 type="date"
                 value={searchData.returnDate}
-                onChange={handleInputChange("returnDate")}
+                onChange={handlers.handleInputChange("returnDate")}
                 slotProps={{
                   input: {
                     startAdornment: <CalendarToday className="mr-" />,
@@ -229,7 +157,8 @@ export const FlightSearch = () => {
             fullWidth
             variant="contained"
             size="large"
-            onClick={handleSearch}
+            onClick={handlers.handleSearch}
+            disabled={!isSearchValid()}
             startIcon={<Search />}
             className="font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 bg-gray-700 dark:bg-gray-500!"
             sx={{
@@ -264,11 +193,10 @@ export const FlightSearch = () => {
               variant="outlined"
             />
             <Chip
-              label={
-                searchData.travelClass.split("_")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")
-              }
+              label={searchData.travelClass
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}
               size="small"
               variant="outlined"
             />
