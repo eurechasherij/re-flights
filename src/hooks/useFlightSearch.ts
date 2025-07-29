@@ -1,9 +1,9 @@
-import { useState } from "react";
-import type { SelectChangeEvent } from "@mui/material";
 import type { AirportResult } from "@/networks/airportResource";
 import { searchFlights, type CabinClass } from "@/networks/flightResource";
+import type { SelectChangeEvent } from "@mui/material";
+import { useState } from "react";
 
-interface FlightSearchState {
+export interface FlightSearchState {
   tripType: string;
   origin: AirportResult | null;
   destination: AirportResult | null;
@@ -26,9 +26,12 @@ export const useFlightSearch = () => {
 
   const { flights, trigger } = searchFlights({
     originSkyId: searchData.origin?.navigation.relevantFlightParams.skyId || "",
-    destinationSkyId: searchData.destination?.navigation.relevantFlightParams.skyId || "",
-    originEntityId: searchData.origin?.navigation.relevantFlightParams.entityId || "",
-    destinationEntityId: searchData.destination?.navigation.relevantFlightParams.entityId || "",
+    destinationSkyId:
+      searchData.destination?.navigation.relevantFlightParams.skyId || "",
+    originEntityId:
+      searchData.origin?.navigation.relevantFlightParams.entityId || "",
+    destinationEntityId:
+      searchData.destination?.navigation.relevantFlightParams.entityId || "",
     date: searchData.departureDate,
     cabinClass: searchData.travelClass,
     adults: searchData.passengers,
@@ -81,20 +84,6 @@ export const useFlightSearch = () => {
     }));
   };
 
-  const handleSearch = async () => {
-    if (!searchData.origin || !searchData.destination || !searchData.departureDate) {
-      console.warn("Missing required search parameters");
-      return;
-    }
-
-    try {
-      await trigger();
-      console.log("Flight search completed:", flights);
-    } catch (error) {
-      console.error("Flight search failed:", error);
-    }
-  };
-
   const isSearchValid = () => {
     return (
       searchData.origin &&
@@ -102,6 +91,24 @@ export const useFlightSearch = () => {
       searchData.departureDate &&
       (searchData.tripType === "oneway" || searchData.returnDate)
     );
+  };
+
+  const setSearchDataFromParams = (searchParams: URLSearchParams) => {
+    const searchData: FlightSearchState = JSON.parse(
+      atob(searchParams.get("searchData") || "")
+    );
+
+    setSearchData(searchData);
+    triggerSearch();
+  };
+
+  const triggerSearch = async () => {
+    try {
+      await trigger();
+      console.log("Flight search triggered:", flights);
+    } catch (error) {
+      console.error("Flight search trigger failed:", error);
+    }
   };
 
   return {
@@ -114,8 +121,9 @@ export const useFlightSearch = () => {
       handleAirportChange,
       handlePassengerChange,
       swapLocations,
-      handleSearch,
     },
     isSearchValid,
+    setSearchDataFromParams,
+    triggerSearch,
   };
 };

@@ -2,13 +2,26 @@ import { FlightItem } from "@/components/FlightItem";
 import { FlightSearch } from "@/components/FlightSearch";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { Box, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router";
 
 export const FlightsPage = () => {
-  const { flights } = useFlightSearch();
+  const [searchParams] = useSearchParams();
+  const { flights, setSearchDataFromParams } = useFlightSearch();
+
+  useEffect(() => {
+    // Check if we have search parameters from navigation
+    const hasSearchParams = searchParams.has("searchData");
+
+    if (hasSearchParams) {
+      // Populate search form with URL parameters
+      setSearchDataFromParams(searchParams);
+    }
+  }, []);
 
   return (
     <section className="w-full flex flex-col items-center bg-gray-100 dark:bg-gray-900">
-      <Box className="flex flex-col gap-6">
+      <Box className="flex flex-col w-full max-w-5xl gap-6">
         {/* Search Form */}
         <FlightSearch />
 

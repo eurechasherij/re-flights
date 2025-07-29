@@ -20,13 +20,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import React, { useEffect } from "react";
+import { useSearchParams } from "react-router";
 import { AirportSearch } from "./AirportSearch";
 
-export const FlightSearch = () => {
-  const { searchData, handlers, isSearchValid } = useFlightSearch();
+export interface FlightSearchProps {
+  onSearch?: (searchData: any) => void;
+}
+
+export const FlightSearch: React.FC<FlightSearchProps> = ({ onSearch }) => {
+  const [searchParams] = useSearchParams();
+  const { searchData, handlers, isSearchValid, setSearchDataFromParams, triggerSearch } =
+    useFlightSearch();
+
+  useEffect(() => {
+    // Check if we have search parameters from navigation
+    const hasSearchParams = searchParams.has("searchData");
+
+    if (hasSearchParams) {
+      // Populate search form with URL parameters
+      setSearchDataFromParams(searchParams);
+    }
+  }, []);
 
   return (
-    <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-xl!">
+    <Card className="w-full max-w-10xl mx-auto shadow-lg rounded-xl!">
       <CardContent className="p-6 flex flex-col gap-4">
         {/* Trip Type and Class Selection */}
         <div className="w-full flex flex-wrap gap-4">
@@ -157,7 +175,13 @@ export const FlightSearch = () => {
             fullWidth
             variant="contained"
             size="large"
-            onClick={handlers.handleSearch}
+            onClick={() => {
+              if (onSearch) {
+                onSearch(searchData);
+              } else {
+                triggerSearch();
+              }
+            }}
             disabled={!isSearchValid()}
             startIcon={<Search />}
             className="font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 bg-gray-700 dark:bg-gray-500!"
