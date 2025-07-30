@@ -261,10 +261,7 @@ export const FlightDemo = () => {
         <Box className="space-y-6">
           <Box className="text-center">
             <Typography variant="h4" className="font-bold text-gray-800 dark:text-gray-200 mb-2">
-              FlightItem Component Demo
-            </Typography>
-            <Typography variant="body1" className="text-gray-600 dark:text-gray-400">
-              Based on Google Flights design - London (LHR) to Bangkok (BKK)
+              Flights Demo
             </Typography>
           </Box>
           

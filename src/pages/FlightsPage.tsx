@@ -7,7 +7,14 @@ import { useSearchParams } from "react-router";
 
 export const FlightsPage = () => {
   const [searchParams] = useSearchParams();
-  const { flights, setSearchDataFromParams } = useFlightSearch();
+  const {
+    flights,
+    searchData,
+    handlers,
+    isSearchValid,
+    setSearchDataFromParams,
+    triggerSearch,
+  } = useFlightSearch();
 
   useEffect(() => {
     // Check if we have search parameters from navigation
@@ -17,13 +24,18 @@ export const FlightsPage = () => {
       // Populate search form with URL parameters
       setSearchDataFromParams(searchParams);
     }
-  }, []);
+  }, [searchParams, setSearchDataFromParams]);
 
   return (
     <section className="w-full flex flex-col items-center bg-gray-100 dark:bg-gray-900">
       <Box className="flex flex-col w-full max-w-5xl gap-6">
         {/* Search Form */}
-        <FlightSearch />
+        <FlightSearch
+          searchData={searchData}
+          handlers={handlers}
+          isSearchValid={isSearchValid}
+          triggerSearch={triggerSearch}
+        />
 
         {/* Flight Results */}
         {flights && (

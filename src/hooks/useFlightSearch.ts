@@ -99,7 +99,6 @@ export const useFlightSearch = () => {
     );
 
     setSearchData(searchData);
-    triggerSearch();
   };
 
   const triggerSearch = async () => {

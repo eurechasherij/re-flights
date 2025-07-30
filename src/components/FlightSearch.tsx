@@ -1,4 +1,5 @@
-import { useFlightSearch } from "@/hooks/useFlightSearch";
+import { type FlightSearchState } from "@/hooks/useFlightSearch";
+import type { AirportResult } from "@/networks/airportResource";
 import {
   CalendarToday,
   FlightLand,
@@ -19,30 +20,50 @@ import {
   Select,
   TextField,
   Typography,
+  type SelectChangeEvent,
 } from "@mui/material";
-import React, { useEffect } from "react";
-import { useSearchParams } from "react-router";
+import React from "react";
 import { AirportSearch } from "./AirportSearch";
 
 export interface FlightSearchProps {
-  onSearch?: (searchData: any) => void;
+  onSearch?: (searchData: FlightSearchState) => void;
+  searchData: FlightSearchState;
+  handlers: {
+    handleTripTypeChange: (
+      event:
+        | React.ChangeEvent<
+            Omit<HTMLInputElement, "value"> & {
+              value: string;
+            }
+          >
+        | (Event & {
+            target: {
+              value: string;
+              name: string;
+            };
+          })
+    ) => void;
+    handleClassChange: (event: SelectChangeEvent) => void;
+    handleInputChange: (
+      field: keyof FlightSearchState
+    ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleAirportChange: (
+      field: "origin" | "destination"
+    ) => (airport: AirportResult | null) => void;
+    handlePassengerChange: (event: SelectChangeEvent) => void;
+    swapLocations: () => void;
+  };
+  isSearchValid: () => string | true | null;
+  triggerSearch: () => Promise<void>;
 }
 
-export const FlightSearch: React.FC<FlightSearchProps> = ({ onSearch }) => {
-  const [searchParams] = useSearchParams();
-  const { searchData, handlers, isSearchValid, setSearchDataFromParams, triggerSearch } =
-    useFlightSearch();
-
-  useEffect(() => {
-    // Check if we have search parameters from navigation
-    const hasSearchParams = searchParams.has("searchData");
-
-    if (hasSearchParams) {
-      // Populate search form with URL parameters
-      setSearchDataFromParams(searchParams);
-    }
-  }, []);
-
+export const FlightSearch: React.FC<FlightSearchProps> = ({
+  onSearch,
+  searchData,
+  handlers,
+  isSearchValid,
+  triggerSearch,
+}) => {
   return (
     <Card className="w-full max-w-10xl mx-auto shadow-lg rounded-xl!">
       <CardContent className="p-6 flex flex-col gap-4">

@@ -1,6 +1,9 @@
 import landingPage from "@/assets/landing-page.png";
 import { FlightSearch } from "@/components/FlightSearch";
-import type { FlightSearchState } from "@/hooks/useFlightSearch";
+import {
+  useFlightSearch,
+  type FlightSearchState,
+} from "@/hooks/useFlightSearch";
 import { useNavigate } from "react-router";
 
 export const LandingPage = () => {
@@ -15,6 +18,9 @@ export const LandingPage = () => {
     params.set("searchData", base64);
     navigate(`/flights?${params.toString()}`);
   };
+
+  const { searchData, handlers, isSearchValid, triggerSearch } =
+    useFlightSearch();
 
   return (
     <section className="w-screen flex flex-col gap-3 justify-center items-center bg-gray-100 dark:bg-gray-900">
@@ -32,7 +38,13 @@ export const LandingPage = () => {
         </p>
       </div>
       {/* Pass handleSearch to FlightSearch as onSearch prop */}
-      <FlightSearch onSearch={handleSearch} />
+      <FlightSearch
+        onSearch={handleSearch}
+        searchData={searchData}
+        handlers={handlers}
+        isSearchValid={isSearchValid}
+        triggerSearch={triggerSearch}
+      />
     </section>
   );
 };

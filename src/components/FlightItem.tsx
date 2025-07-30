@@ -58,18 +58,24 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
             />
           ) : (
             <Box className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
-              <FlightTakeoff className="w-4 h-4 text-gray-500" />
+              <FlightTakeoff className="w-4 h-4 text-gray-500 dark:text-gray-200" />
             </Box>
           )}
         </Box>
 
         <Box className="min-w-0 flex-1">
-          <Typography variant="body2" className="text-gray-600 truncate">
+          <Typography
+            variant="body2"
+            className="text-gray-600 dark:text-gray-200 truncate"
+          >
             {leg.carriers.marketing[0]?.name || "Unknown Airline"}
           </Typography>
           {leg.carriers.operationType === "operated_by" &&
             leg.carriers.operating?.[0] && (
-              <Typography variant="caption" className="text-gray-500 truncate">
+              <Typography
+                variant="caption"
+                className="text-gray-500 dark:text-gray-200 truncate"
+              >
                 Operated by {leg.carriers.operating[0].name}
               </Typography>
             )}
@@ -82,13 +88,19 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
           <Typography variant="h6" className="font-semibold">
             {formatTime(leg.departure)}
           </Typography>
-          <Typography variant="body2" className="text-gray-600">
+          <Typography
+            variant="body2"
+            className="text-gray-600 dark:text-gray-400"
+          >
             {leg.origin.displayCode}
           </Typography>
         </Box>
 
         <Box className="flex flex-col items-center gap-1 min-w-[120px]">
-          <Typography variant="body2" className="text-gray-600">
+          <Typography
+            variant="body2"
+            className="text-gray-600 dark:text-gray-400"
+          >
             {formatDuration(leg.durationInMinutes)}
           </Typography>
           <Box className="flex items-center gap-2 w-full">
@@ -98,7 +110,10 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
             )}
             <Divider className="flex-1" />
           </Box>
-          <Typography variant="caption" className="text-gray-500">
+          <Typography
+            variant="caption"
+            className="text-gray-500 dark:text-gray-200"
+          >
             {getStopText(leg.stopCount)}
           </Typography>
         </Box>
@@ -117,7 +132,10 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
               </Typography>
             )}
           </Box>
-          <Typography variant="body2" className="text-gray-600">
+          <Typography
+            variant="body2"
+            className="text-gray-600 dark:text-gray-400"
+          >
             {leg.destination.displayCode}
           </Typography>
         </Box>
@@ -129,7 +147,10 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
           <Typography variant="h5" className="font-bold text-blue-600">
             {itinerary.price.formatted}
           </Typography>
-          <Typography variant="caption" className="text-gray-500">
+          <Typography
+            variant="caption"
+            className="text-gray-500 dark:text-gray-200"
+          >
             per person
           </Typography>
         </Box>
@@ -198,7 +219,10 @@ export const FlightItem: FC<FlightItemProps> = ({ itinerary }) => {
             </Box>
 
             {/* Flight Score */}
-            <Typography variant="caption" className="text-gray-500">
+            <Typography
+              variant="caption"
+              className="text-gray-500 dark:text-gray-200"
+            >
               Score: {itinerary.score.toFixed(1)}
             </Typography>
           </Box>
